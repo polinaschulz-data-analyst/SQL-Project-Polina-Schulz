@@ -41,12 +41,12 @@ and event_name in ('session_start', 'view_item', 'add_to_cart', 'begin_checkout'
 <img width="1470" height="921" alt="image" src="https://github.com/user-attachments/assets/5d967c4e-cc2c-4f22-9d84-3ff936801b96" />
 
 3) Calculation of conversions by date and traffic channels.
-with user_session_mapping as (
-  select 
-timestamp_micros(event_timestamp) as event_timestamp
-, user_pseudo_id
-|| cast((select value.int_value from ga4.event_params where key = 'ga_session_id') as string) as user_session_id
-, event_name as event_name
+with user_session_mapping as ( 
+  select  
+timestamp_micros(event_timestamp) as event_timestamp 
+, user_pseudo_id 
+|| cast((select value.int_value from ga4.event_params where key = 'ga_session_id') as string) as user_session_id 
+, event_name as event_name 
 , traffic_source.source as source
 , traffic_source.medium as medium
 , traffic_source.name as campaign
