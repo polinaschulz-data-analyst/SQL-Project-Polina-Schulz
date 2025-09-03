@@ -14,9 +14,9 @@ Enjoy exploring, and feel free to reach out if you have any questions!
 1) To begin, I will outline the data structure of the file.
 
 
-select *
-from `bigquery-public-data.ga4_obfuscated_sample_ecommerce.events_*` as ga4
-limit 10
+select *   
+from `bigquery-public-data.ga4_obfuscated_sample_ecommerce.events_*` as ga4   
+limit 10   
 ;
 <img width="2579" height="928" alt="image" src="https://github.com/user-attachments/assets/e9e7c314-9761-4e1a-a6c4-cb1c13e06f7f" />
 
