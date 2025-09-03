@@ -118,42 +118,42 @@ order by 2 desc
 <img width="1062" height="852" alt="image" src="https://github.com/user-attachments/assets/f2d326db-0f8f-4b99-a01a-ffa06c775bd4" />
 
 5) Checking the correlation between user engagement and purchases.
-with user_sessions as (
-  select
-    user_pseudo_id ||
-      cast((select value.int_value from unnest(event_params) where key = 'ga_session_id') as string)
-      as user_session_id
-    ,sum(coalesce(
-      (select value.int_value from unnest(event_params) where key = 'engagement_time_msec'),0))
-      as total_engagement_time
-    ,case 
-      when 
-        sum(coalesce(
-          safe_cast(
-          (select value.string_value from unnest(event_params) where key = 'session_engaged') as integer), 0)
-        ) > 0
-      then 1
-      else 0 end 
-      as is_session_engaged
-  from `bigquery-public-data.ga4_obfuscated_sample_ecommerce.events_*` e
-  group by 1
-  order by 3 desc
-), 
-
-purchases as (
-  select
-    user_pseudo_id ||
-      cast((select value.int_value from unnest(event_params) where key = 'ga_session_id') as string)
-      as user_session_id
-  from `bigquery-public-data.ga4_obfuscated_sample_ecommerce.events_*` e
-  where event_name = 'purchase'
-)
-select
-  corr(s.total_engagement_time, case when p.user_session_id is not null then 1 else 0 end) as corr_engagement_time_to_purchase
-  , corr(s.is_session_engaged,case when p.user_session_id is not null then 1 else 0 end) as corr_engaged_session_to_purchase
-from user_sessions as s
-left join purchases as p using (user_session_id)
-;
+with user_sessions as (  
+  select  
+    user_pseudo_id ||  
+      cast((select value.int_value from unnest(event_params) where key = 'ga_session_id') as string)  
+      as user_session_id  
+    ,sum(coalesce(  
+      (select value.int_value from unnest(event_params) where key = 'engagement_time_msec'),0))  
+      as total_engagement_time  
+    ,case   
+      when   
+        sum(coalesce(  
+          safe_cast(  
+          (select value.string_value from unnest(event_params) where key = 'session_engaged') as integer), 0)  
+        ) > 0  
+      then 1  
+      else 0 end   
+      as is_session_engaged  
+  from `bigquery-public-data.ga4_obfuscated_sample_ecommerce.events_*` e  
+  group by 1  
+  order by 3 desc  
+),   
+  
+purchases as (  
+  select  
+    user_pseudo_id ||  
+      cast((select value.int_value from unnest(event_params) where key = 'ga_session_id') as string)  
+      as user_session_id  
+  from `bigquery-public-data.ga4_obfuscated_sample_ecommerce.events_*` e  
+  where event_name = 'purchase'  
+)  
+select  
+  corr(s.total_engagement_time, case when p.user_session_id is not null then 1 else 0 end) as corr_engagement_time_to_purchase  
+  , corr(s.is_session_engaged,case when p.user_session_id is not null then 1 else 0 end) as corr_engaged_session_to_purchase  
+from user_sessions as s  
+left join purchases as p using (user_session_id)  
+;  
 
 <img width="980" height="242" alt="image" src="https://github.com/user-attachments/assets/245fa882-b969-4447-9533-abcf2af6a75f" />
 
