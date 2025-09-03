@@ -41,44 +41,44 @@ and event_name in ('session_start', 'view_item', 'add_to_cart', 'begin_checkout'
 <img width="1470" height="921" alt="image" src="https://github.com/user-attachments/assets/5d967c4e-cc2c-4f22-9d84-3ff936801b96" />
 
 3) Calculation of conversions by date and traffic channels.
-with user_session_mapping as ( 
-  select  
-timestamp_micros(event_timestamp) as event_timestamp 
-, user_pseudo_id 
-|| cast((select value.int_value from ga4.event_params where key = 'ga_session_id') as string) as user_session_id 
-, event_name as event_name 
-, traffic_source.source as source
-, traffic_source.medium as medium
-, traffic_source.name as campaign
-from `bigquery-public-data.ga4_obfuscated_sample_ecommerce.events_*` as ga4
-where 
-event_name in ('session_start', 'add_to_cart', 'begin_checkout', 'purchase')
-),
-
-event_count as (
-select
-date (event_timestamp) as event_date
-, source
-, medium
-, campaign
-, count(distinct user_session_id) as user_sessions_count
-, count (distinct case when event_name ='add_to_cart' then user_session_id end) as count_add_to_cart
-, count (distinct case when event_name ='begin_checkout' then user_session_id end) as count_begin_checkout
-, count (distinct case when event_name ='purchase' then user_session_id end) as count_purchase
-from user_session_mapping
-group by 1,2,3,4
-)
-select
-event_date
-, source
-, medium
-, campaign
-, user_sessions_count
-, count_add_to_cart / user_sessions_count as visit_to_cart
-, count_begin_checkout / user_sessions_count as visit_to_checkout
-, count_purchase / user_sessions_count as visit_to_purchase
-from event_count
-;
+with user_session_mapping as (  
+  select   
+timestamp_micros(event_timestamp) as event_timestamp  
+, user_pseudo_id  
+|| cast((select value.int_value from ga4.event_params where key = 'ga_session_id') as string) as user_session_id  
+, event_name as event_name  
+, traffic_source.source as source  
+, traffic_source.medium as medium  
+, traffic_source.name as campaign  
+from `bigquery-public-data.ga4_obfuscated_sample_ecommerce.events_*` as ga4  
+where   
+event_name in ('session_start', 'add_to_cart', 'begin_checkout', 'purchase')  
+),  
+  
+event_count as (  
+select  
+date (event_timestamp) as event_date  
+, source  
+, medium  
+, campaign  
+, count(distinct user_session_id) as user_sessions_count  
+, count (distinct case when event_name ='add_to_cart' then user_session_id end) as count_add_to_cart  
+, count (distinct case when event_name ='begin_checkout' then user_session_id end) as count_begin_checkout  
+, count (distinct case when event_name ='purchase' then user_session_id end) as count_purchase  
+from user_session_mapping  
+group by 1,2,3,4  
+)  
+select  
+event_date  
+, source  
+, medium  
+, campaign  
+, user_sessions_count  
+, count_add_to_cart / user_sessions_count as visit_to_cart  
+, count_begin_checkout / user_sessions_count as visit_to_checkout  
+, count_purchase / user_sessions_count as visit_to_purchase  
+from event_count  
+;  
 <img width="1669" height="882" alt="image" src="https://github.com/user-attachments/assets/072965b1-ac58-4bcd-886c-6beb86cc0f5d" />
 
 4) Comparison of conversion rates between different landing pages.
