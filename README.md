@@ -84,37 +84,37 @@ from event_count
 4) Comparison of conversion rates between different landing pages.
 with page_location as (
 
-select
-user_pseudo_id ||'_'||
-cast((select value.int_value from unnest (event_params) where key = 'ga_session_id')as string) as user_session_id
-, (select value.string_value from unnest (event_params) where key = 'page_location') as page_location_full_url
-, (select value.int_value from unnest (event_params) where key = 'ga_session_id') as session_id
-from `bigquery-public-data.ga4_obfuscated_sample_ecommerce.events_*`
-where event_name ='session_start'
-and  _TABLE_SUFFIX between '20200101' and '20201231'
-), 
-
-purchases as (
-select
-user_pseudo_id ||'_'||
-cast((select value.int_value from unnest (event_params) where key = 'ga_session_id')as string) as user_session_id
-, (select value.string_value from unnest (event_params) where key = 'page_location') as page_location_full_url
-, (select value.int_value from unnest (event_params) where key = 'ga_session_id') as session_id
-from `bigquery-public-data.ga4_obfuscated_sample_ecommerce.events_*`
-where event_name ='purchase'
-and  _TABLE_SUFFIX between '20200101' and '20201231'
-)
-select 
-regexp_extract(pl.page_location_full_url, r"https?://[^/]+(/[^?#]*)") as page_path
-, count (distinct pl.user_session_id) as number_unique_user_sessions
-, count (distinct p.user_session_id) as number_purchases_for_unique_u_s
-, count (distinct p.user_session_id) / count (distinct pl.user_session_id) as visit_to_purchase
-from page_location as pl
-left join purchases as p using (user_session_id)
-where pl.page_location_full_url is not null
-group by page_path
-order by 2 desc
-;
+select  
+user_pseudo_id ||'_'||  
+cast((select value.int_value from unnest (event_params) where key = 'ga_session_id')as string) as user_session_id  
+, (select value.string_value from unnest (event_params) where key = 'page_location') as page_location_full_url  
+, (select value.int_value from unnest (event_params) where key = 'ga_session_id') as session_id  
+from `bigquery-public-data.ga4_obfuscated_sample_ecommerce.events_*`  
+where event_name ='session_start'  
+and  _TABLE_SUFFIX between '20200101' and '20201231'  
+),   
+  
+purchases as (  
+select  
+user_pseudo_id ||'_'||  
+cast((select value.int_value from unnest (event_params) where key = 'ga_session_id')as string) as user_session_id  
+, (select value.string_value from unnest (event_params) where key = 'page_location') as page_location_full_url  
+, (select value.int_value from unnest (event_params) where key = 'ga_session_id') as session_id  
+from `bigquery-public-data.ga4_obfuscated_sample_ecommerce.events_*`  
+where event_name ='purchase'  
+and  _TABLE_SUFFIX between '20200101' and '20201231'  
+)  
+select   
+regexp_extract(pl.page_location_full_url, r"https?://[^/]+(/[^?#]*)") as page_path  
+, count (distinct pl.user_session_id) as number_unique_user_sessions  
+, count (distinct p.user_session_id) as number_purchases_for_unique_u_s  
+, count (distinct p.user_session_id) / count (distinct pl.user_session_id) as visit_to_purchase  
+from page_location as pl  
+left join purchases as p using (user_session_id)  
+where pl.page_location_full_url is not null  
+group by page_path  
+order by 2 desc  
+;  
 <img width="1062" height="852" alt="image" src="https://github.com/user-attachments/assets/f2d326db-0f8f-4b99-a01a-ffa06c775bd4" />
 
 5) Checking the correlation between user engagement and purchases.
