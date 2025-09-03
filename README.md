@@ -22,20 +22,20 @@ limit 10
 
 2) Filtering the data to include only the year 2021 and specific selected events.
 
-select
-timestamp_micros(event_timestamp) as event_timestamp
-, user_pseudo_id 
-, (select value.int_value from ga4.event_params where key = 'ga_session_id') as session_id
-, event_name as event_name
-, geo.country as country
-, device.category as device_category
-, traffic_source.source as source
-, traffic_source.medium as medium
-, traffic_source.name as campaign
-from `bigquery-public-data.ga4_obfuscated_sample_ecommerce.events_*` as ga4
-where 
-_TABLE_SUFFIX between '20210101' and '20211231'
-and event_name in ('session_start', 'view_item', 'add_to_cart', 'begin_checkout', 'add_shipping_info', 'add_payment_info', 'purchase')
+select   
+timestamp_micros(event_timestamp) as event_timestamp   
+, user_pseudo_id   
+, (select value.int_value from ga4.event_params where key = 'ga_session_id') as session_id  
+, event_name as event_name  
+, geo.country as country  
+, device.category as device_category  
+, traffic_source.source as source  
+, traffic_source.medium as medium  
+, traffic_source.name as campaign  
+from `bigquery-public-data.ga4_obfuscated_sample_ecommerce.events_*` as ga4  
+where   
+_TABLE_SUFFIX between '20210101' and '20211231'  
+and event_name in ('session_start', 'view_item', 'add_to_cart', 'begin_checkout', 'add_shipping_info', 'add_payment_info', 'purchase')  
 ;
 
 <img width="1470" height="921" alt="image" src="https://github.com/user-attachments/assets/5d967c4e-cc2c-4f22-9d84-3ff936801b96" />
